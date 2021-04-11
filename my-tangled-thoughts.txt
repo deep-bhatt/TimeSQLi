@@ -1,0 +1,45 @@
+cur.execute('SELECT password FROM admins WHERE username=\'%s\'' % request.form['username'].replace('%', '%%')) == 0:
+
+admins:
+    id | username | password
+    1  | xyz      | deneen
+
+    (Only one record... or that's what I think)
+
+Time based injection w SLEEP()
+Can't see the output
+
+Ideally, I'd want to have
+    i. All Table Names
+        a. All Column names from a table
+
+
+So, I have a PAYLOAD, and a parameter that we will iterate over the all possible characters.
+
+
+===== PRECURSOR =====
+
+information_schema is a database that contains metadata about all the other tables, thier columns, user privilages & permissions, 'SYSTEM' stuffs you could think of...
+
+
+Tables to be aware of
+
+1. information_schema.schemata
+
+    Schemata table contains the information about the databases you have in your SQL server.
+
+    Information such as: their names(aka SCHEMA_NAME), character set, encryption settings, and so on.
+
+    Schemata table is useful and should be your first step to find out the name of databases.
+
+
+2. information_schema.tables
+
+    Now you might want to sit down here, Table `tables` contains information about ALL the tables from ALL the databases.
+
+    So, if you want to list out the table names of database say 'testing', then you could do something like this.
+
+    `select table_name from information_schema.tables where table_schema = 'testing'`
+
+
+
